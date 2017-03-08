@@ -13,3 +13,8 @@ It contains the following recipies:
 	- Version: Master
 	- License: No license 
 	- Source: [GitHub](https://github.com/fmiguelgarcia/libqmhd.git)
+
+- Boost Http library:
+	- Version: 0.3
+	- License: Boost Software License 1.0
+	- Source: [GitHub](https://github.com/BoostGSoC14/boost.http.git)
