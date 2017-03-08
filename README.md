@@ -8,3 +8,8 @@ It contains the following recipies:
   - Version: Master
   - License: LGPL 2.0
   - Source: [GitHub](https://gnunet.org/git/libmicrohttpd.git)
+
+- libQMHD library:
+	- Version: Master
+	- License: No license 
+	- Source: [GitHub](https://github.com/fmiguelgarcia/libqmhd.git)
