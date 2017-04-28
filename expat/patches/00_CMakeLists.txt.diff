@@ -1,5 +1,5 @@
---- CMakeLists.txt	2017-04-28 12:49:53.941014000 +0200
-+++ CMakeLists.txt	2017-04-28 12:52:10.181480800 +0200
+--- CMakeLists.txt	2016-06-21 05:58:38.000000000 +0200
++++ CMakeLists.txt	2017-04-28 16:07:26.434144800 +0200
 @@ -14,6 +14,7 @@
  option(BUILD_examples "build the examples for expat library" ON)
  option(BUILD_tests "build the tests for expat library" ON)
@@ -8,7 +8,18 @@
  
  # configuration options
  set(XML_CONTEXT_BYTES 1024 CACHE STRING "Define to specify how much context to retain around the current parse point")
-@@ -92,8 +93,9 @@
+@@ -57,7 +58,9 @@
+ if(BUILD_shared)
+     set(_SHARED SHARED)
+     if(WIN32)
+-        set(expat_SRCS ${expat_SRCS} lib/libexpat.def)
++		if( NOT MINGW) 
++			set(expat_SRCS ${expat_SRCS} lib/libexpat.def)
++		endif()
+     endif(WIN32)
+ else(BUILD_shared)
+     set(_SHARED STATIC)
+@@ -92,8 +95,9 @@
  install(FILES lib/expat.h lib/expat_external.h DESTINATION include)
  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/expat.pc DESTINATION lib/pkgconfig)
  

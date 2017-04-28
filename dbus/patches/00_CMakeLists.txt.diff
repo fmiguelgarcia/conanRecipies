@@ -1,0 +1,41 @@
+--- CMakeLists.txt	2015-11-23 22:53:42.000000000 +0100
++++ dbus/cmake/CMakeLists.txt	2017-04-28 16:40:30.667963700 +0200
+@@ -1,3 +1,9 @@
++include(${CMAKE_BINARY_DIR}/../conanbuildinfo.cmake)
++#conan_basic_setup()
++
++SET(XML_LIBRARY ${CONAN_LIBS_EXPAT})
++SET(XML_INCLUDE_DIR ${CONAN_INCLUDE_DIRS_EXPAT})
++
+ # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
+ 
+@@ -280,7 +286,8 @@
+ include_directories( ${CMAKE_SOURCE_DIR}/.. ${CMAKE_BINARY_DIR} ${CMAKE_INCLUDE_PATH} )
+ 
+ # linker search directories
+-link_directories(${DBUS_LIB_DIR} ${LIBRARY_OUTPUT_PATH} )
++link_directories(${DBUS_LIB_DIR} ${LIBRARY_OUTPUT_PATH} 
++	${CONAN_LIB_DIRS_EXPAT} )
+ include_directories( ${CMAKE_LIBRARY_PATH}  )
+ 
+ set(DBUS_INCLUDES)
+@@ -355,13 +362,13 @@
+     endif(HAVE_CONSOLE_OWNER_FILE)
+ endif("${sysname}" MATCHES ".*SOLARIS.*")
+ 
+-if(NOT EXPAT_FOUND)
+-    message(FATAL_ERROR "expat not found!")
+-endif(NOT EXPAT_FOUND)
++#if(NOT EXPAT_FOUND)
++#    message(FATAL_ERROR "expat not found!")
++#endif(NOT EXPAT_FOUND)
+ 
+ SET(XML_LIB "Expat")
+-SET(XML_LIBRARY     ${EXPAT_LIBRARIES})
+-SET(XML_INCLUDE_DIR ${EXPAT_INCLUDE_DIR})
++#SET(XML_LIBRARY     ${EXPAT_LIBRARIES})
++#SET(XML_INCLUDE_DIR ${EXPAT_INCLUDE_DIR})
+ 
+ # all missing or hardcoded for now
+ 

@@ -1,6 +1,6 @@
 import os
 from conans import ConanFile, CMake
-from conans.tools import download, unzip, patch
+from conans.tools import get, patch
 import shutil
 
 class ExpatConan(ConanFile):
@@ -20,17 +20,13 @@ class ExpatConan(ConanFile):
 
     def source(self):
         # Get source code
-        zip_name = "R_2_2_0.zip"
-        download( "https://github.com/libexpat/libexpat/archive/R_2_2_0.zip", zip_name)
-        unzip( zip_name)
+        get( "https://github.com/libexpat/libexpat/archive/R_2_2_0.zip")
         shutil.move( "libexpat-R_2_2_0", "libexpat")
 
         # Apply patches
-        self.output.info( "Applying patches in source code ...")
+        self.output.info( "Applying patches in source code")
         patch( base_path="libexpat/expat", patch_file="patches/00_CMakeLists.txt.diff")
 
-        # Clean
-        os.unlink( zip_name)
         
     def build(self):
         expat_source_dir = os.path.abspath( "libexpat/expat") 
@@ -38,7 +34,7 @@ class ExpatConan(ConanFile):
         
         cmake = CMake( self)
         cmake.definitions["BUILD_tools"] = "OFF"
-        cmake.definitions["BUILD_shared"] = "OFF"
+        cmake.definitions["BUILD_shared"] = "ON"
         cmake.definitions["BUILD_examples"] = "OFF" 
         cmake.definitions["BUILD_tests"] = "OFF" 
         cmake.definitions["BUILD_doc"] = "OFF" 
@@ -48,7 +44,8 @@ class ExpatConan(ConanFile):
 
     def package(self):
         self.copy( pattern="*.h", src="libexpat/expat/build/install/include", dst="include", keep_path=True)
-        self.copy( pattern="libexpat.*", src="libexpat/expat/build/install/lib", dst="lib", keep_path=True)
+        self.copy( pattern="libexpat.*", src="libexpat/expat/build/install/lib", dst="lib", keep_path=False)
+        self.copy( pattern="libexpat.*", src="libexpat/expat/build/install/bin", dst="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs.extend(["expat"])
