@@ -10,6 +10,7 @@ class DBusConan(ConanFile):
     license = "LGPL 2.1"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
+    short_paths = True
     requires = "expat/2.2.0@fmiguelgarcia/stable"
     exports = ["patches/*"]
 
@@ -23,8 +24,9 @@ class DBusConan(ConanFile):
         patch( base_path="dbus/cmake", patch_file="patches/00_CMakeLists.txt.diff")
 
     def build(self):
-        cmake = CMake( self)
         cmake_dir = os.sep.join( [ self.conanfile_directory, "dbus", "cmake"]) 
+        cmake = CMake( self)
+        #cmake.parallel = False
         cmake.definitions["DBUS_BUILD_TESTS"] = "OFF"        
         cmake.definitions["CONAN_DISABLE_CHECK_COMPILER"] = "ON"        
         cmake.definitions["CMAKE_CXX_COMPILER"] = self.settings.compiler        
