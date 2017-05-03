@@ -47,8 +47,9 @@ class ExpatConan(ConanFile):
         self.copy( pattern="libexpat.*", src="libexpat/expat/build/install/lib", dst="lib", keep_path=False)
         self.copy( pattern="libexpat.*", src="libexpat/expat/build/install/bin", dst="lib", keep_path=False)
         # Windwos in debug mode
-        self.copy( pattern="libexpatd.*", src="libexpat/expat/build/install/lib", dst="lib", keep_path=False)
-        self.copy( pattern="libexpatd.*", src="libexpat/expat/build/install/bin", dst="lib", keep_path=False)
+        if self.settings.os == "Windows":
+            self.copy( pattern="*expat*.lib", src="libexpat/expat/build/install/lib", dst="lib", keep_path=False)
+            self.copy( pattern="*expat*.dll*", src="libexpat/expat/build/install/bin", dst="lib", keep_path=False)
 
     def package_info(self):
         if self.settings.os == "Windows" and self.settings.build_type == "Debug":
