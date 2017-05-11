@@ -1,7 +1,6 @@
-from conans import ConanFile, CMake 
-from conans.tools import os_info, get, patch
+from conans import ConanFile, tools
 import shutil
-import os 
+import multiprocessing
 
 class QXmppConan(ConanFile):
     # Conan 
@@ -11,26 +10,45 @@ class QXmppConan(ConanFile):
     license = "LGPL 2.1"
     url = "http://doc.qxmpp.org"
     settings = "os", "compiler", "build_type", "arch"
+    options = { "use_doxygen":[True, False],
+        "use_opus": [True,False],
+        "use_speex": [True,False],
+        "use_theora": [True,False],
+        "autotest_internal": [True,False],
+        "use_vpx": [True,False] }
+    default_options = "use_doxygen=False", \
+        "use_opus=False", \
+        "use_speex=False", \
+        "use_theora=False", \
+        "autotest_internal=True", \
+        "use_vpx=False"
 
     # Other
     source_path = "qxmpp"
+    prefix = "usr"
 
     def source(self):
         # Get source code
-        get("https://github.com/fmiguelgarcia/qxmpp/archive/v0.9.3.zip")
+        tools.get("https://github.com/fmiguelgarcia/qxmpp/archive/v0.9.3.zip")
         shutil.move( "qxmpp-0.9.3", self.source_path)
 
     def build(self):
-        self.run( "cd build && qmake "
+        qmake_options = "PREFIX=" + self.prefix + " "
+        qmake_options += "QXMPP_AUTOTEST_INTERNAL=1 " if self.options.autotest_internal else ""
+        qmake_options += "QXMPP_USE_DOXYGEN=1 " if self.options.use_doxygen else ""
+        qmake_options += "QXMPP_USE_OPUS=1 " if self.options.use_opus else ""
+        qmake_options += "QXMPP_USE_SPEEX=1 " if self.options.use_speex else ""
+        qmake_options += "QXMPP_USE_THEORA=1 " if self.options.use_theora else ""
+        qmake_options += "QXMPP_USE_VPX=1 " if self.options.use_vpx else ""
+        
+        with tools.chdir( "qxmpp"):
+            self.run( "qmake \"%s\"" % qmake_options)
+            self.run( "make -j %d" % multiprocessing.cpu_count())
+            self.run( "make install")
 
     def package(self):
-        self.copy( pattern="*.h", src="build/install/include", dst="include/", keep_path=True)
-        self.copy( pattern="libdbus*", src="build/install/bin", dst="lib/", keep_path=False)
-        self.copy( pattern="libdbus*", src="build/install/lib", dst="lib/", keep_path=False)
-        self.copy( pattern="dbus-*.exe", src="build/install/bin", dst="bin/", keep_path=False)
-        self.copy( pattern="dbus-*.bat", src="build/install/bin", dst="bin/", keep_path=False)
-        self.copy( pattern="*", src="build/install/share", dst="share/", keep_path=True)
-        self.copy( pattern="*", src="build/install/etc", dst="etc/", keep_path=True)
+        self.copy( pattern="*.h", src="qxmpp/src/usr", dst="include/", keep_path=True)
+        self.copy( pattern="libqxmpp.so*", src="qxmpp/src/usr", dst="lib/", keep_path=True, symlinks=True)
 
     def package_info(self):
-        self.cpp_info.libs.extend(["libtelepathy-qt5"])
+        self.cpp_info.libs.extend(["qxmpp"])
