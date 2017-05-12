@@ -25,7 +25,6 @@ class QXmppConan(ConanFile):
 
     # Other
     source_path = "qxmpp"
-    prefix = "usr"
 
     def source(self):
         # Get source code
@@ -33,22 +32,21 @@ class QXmppConan(ConanFile):
         shutil.move( "qxmpp-0.9.3", self.source_path)
 
     def build(self):
-        qmake_options = "PREFIX=" + self.prefix + " "
-        qmake_options += "QXMPP_AUTOTEST_INTERNAL=1 " if self.options.autotest_internal else ""
+        qmake_options = "QXMPP_AUTOTEST_INTERNAL=1 " if self.options.autotest_internal else ""
         qmake_options += "QXMPP_USE_DOXYGEN=1 " if self.options.use_doxygen else ""
         qmake_options += "QXMPP_USE_OPUS=1 " if self.options.use_opus else ""
         qmake_options += "QXMPP_USE_SPEEX=1 " if self.options.use_speex else ""
         qmake_options += "QXMPP_USE_THEORA=1 " if self.options.use_theora else ""
         qmake_options += "QXMPP_USE_VPX=1 " if self.options.use_vpx else ""
+        self.output.info( "Using QMake options: "+ qmake_options)
         
         with tools.chdir( "qxmpp"):
             self.run( "qmake \"%s\"" % qmake_options)
             self.run( "make -j %d" % multiprocessing.cpu_count())
-            self.run( "make install")
 
     def package(self):
-        self.copy( pattern="*.h", src="qxmpp/src/usr", dst="include/", keep_path=True)
-        self.copy( pattern="libqxmpp.so*", src="qxmpp/src/usr", dst="lib/", keep_path=True, symlinks=True)
+        self.copy( pattern="*.h", src="qxmpp/src", dst="include/", keep_path=True)
+        self.copy( pattern="libqxmpp.so*", src="qxmpp/src", dst="lib/", keep_path=True, symlinks=True)
 
     def package_info(self):
         self.cpp_info.libs.extend(["qxmpp"])
