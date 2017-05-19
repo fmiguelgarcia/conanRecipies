@@ -58,11 +58,11 @@ class QXmppConan(ConanFile):
             for lib_ext in [ "dll", "pdb", "exp", "lib"]:
                 self.copy( pattern="qxmpp*.%s" % lib_ext, src="qxmpp/src", dst="lib/", keep_path=False, symlinks=True)
         else:
-            self.copy( pattern="*qxmpp.so*", src="qxmpp/src", dst="lib/", keep_path=False, symlinks=True)
+            self.copy( pattern="*qxmpp*.so*", src="qxmpp/src", dst="lib/", keep_path=False, symlinks=True)
 
     def package_info(self):
-        lib_name = "qxmpp"
+        lib_name = "qxmpp" if self.settings.build_type == "Release" else "qxmpp_d"
         if self.settings.compiler == "Visual Studio":
-            lib_name = "qxmpp0" if self.settings.build_type == "Release" else "qxmpp_d0"
+            lib_name += "0"
         self.cpp_info.libs.extend([lib_name])
 
