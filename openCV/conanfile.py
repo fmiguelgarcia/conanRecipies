@@ -55,26 +55,28 @@ class OpenCVConan(ConanFile):
 
     def package(self):
         install_prefix = "build/usr"
-        self.copy( pattern="*", dst="lib", src="%s/lib" % install_prefix)
-        self.copy( pattern="*", dst="bin", src="%s/bin" % install_prefix)
         self.copy( pattern="*", dst="include", src="%s/include" % install_prefix)
-        self.copy( pattern="*", dst="shared", src="%s/shared" % install_prefix)
         self.copy( pattern="*", dst="etc", src="%s/etc" % install_prefix, keep_path=True)
+        self.copy( pattern="*", dst="shared", src="%s/shared" % install_prefix)
+
+        self.copy( pattern="**/opencv_*.lib", dst="lib", src=install_prefix, keep_path=False)
+        self.copy( pattern="**/opencv_*.dll", dst="lib", src=install_prefix, keep_path=False)
+        self.copy( pattern="*.exe", dst="bin", src=install_prefix, keep_path=False)
+
         self.copy( pattern="*.dll", dst="lib", src=install_prefix, keep_path=False)
         self.copy( pattern="*.dll.a", dst="lib", src=install_prefix, keep_path=False)
-        self.copy( pattern="*.exe", dst="lib", src=install_prefix, keep_path=False)
         filename_libs = []
         for root, dirnames, filenames in os.walk( install_prefix):
-            for filename in fnmatch.filter( filenames, '*.dll'):
-                filename_libs.append( filename)
-            for filename in fnmatch.filter( filenames, '*.so'):
-                filename_libs.append( filename)
+            for extension in [ "*.dll", "*.lib", "*.so"]:
+                for filename in fnmatch.filter( filenames, extension):
+                    filename_libs.append( filename)
 
         for libname in filename_libs:
-            libname = re.sub( '^lib', '', libname)
-            libname = re.sub( '\\.dll', '', libname)
-            libname = re.sub( '\\.so', '', libname)
-            self.generated_libs.append( libname) 
+            if libname.endswith( ".lib"):
+                libname = re.sub( '^lib', '', libname)
+                libname = re.sub( '\\.dll', '', libname)
+                libname = re.sub( '\\.so', '', libname)
+                self.generated_libs.append( libname) 
         self.output.info( "OpenCV generated libs: %s" % self.generated_libs )
 
     def package_info(self):
