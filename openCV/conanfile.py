@@ -3,7 +3,6 @@ from conans.tools import get, chdir
 import os
 import shutil
 import re
-import fnmatch 
 
 def withOptionToCmake( name, value):
     return "-D %s=%s " % (name ,("ON" if value else "OFF"))
@@ -16,6 +15,7 @@ class OpenCVConan(ConanFile):
     license = "3-clause BSD License"
     description = "Open Source Computer Vision Library"
     generators = "cmake"
+    #build_policy = "always"
     options = { "opencv_with_ipp": [True, False],
             "opencv_with_qt": [True, False],
             "opencv_with_opengl": [True, False],
@@ -24,7 +24,6 @@ class OpenCVConan(ConanFile):
         "opencv_with_qt=True", \
         "opencv_with_opengl=True", \
         "opencv_with_cuda=True"
-    generated_libs = []
 
     def config(self):
         if self.settings.os == "Windows":
@@ -65,19 +64,15 @@ class OpenCVConan(ConanFile):
 
         self.copy( pattern="*.dll", dst="lib", src=install_prefix, keep_path=False)
         self.copy( pattern="*.dll.a", dst="lib", src=install_prefix, keep_path=False)
-        filename_libs = []
-        for root, dirnames, filenames in os.walk( install_prefix):
-            for extension in [ "*.dll", "*.lib", "*.so"]:
-                for filename in fnmatch.filter( filenames, extension):
-                    filename_libs.append( filename)
 
-        for libname in filename_libs:
+    def package_info(self):
+        generated_libs = []
+        libDir =  os.path.join( self.package_folder , "lib")
+        for libname in os.listdir( libDir):
             if libname.endswith( ".lib"):
                 libname = re.sub( '^lib', '', libname)
                 libname = re.sub( '\\.dll', '', libname)
                 libname = re.sub( '\\.so', '', libname)
-                self.generated_libs.append( libname) 
-        self.output.info( "OpenCV generated libs: %s" % self.generated_libs )
-
-    def package_info(self):
-        self.cpp_info.libs.extend( self.generated_libs)
+                generated_libs.append( libname) 
+        
+        self.cpp_info.libs.extend( generated_libs)
