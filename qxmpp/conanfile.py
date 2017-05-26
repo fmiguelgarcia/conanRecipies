@@ -1,5 +1,6 @@
 from conans import ConanFile, tools
 import shutil
+import os 
 
 class QXmppConan(ConanFile):
     # Conan 
@@ -14,7 +15,9 @@ class QXmppConan(ConanFile):
         "use_speex": [True,False],
         "use_theora": [True,False],
         "autotest_internal": [True,False],
-        "use_vpx": [True,False] }
+        "use_vpx": [True,False],
+        "qt_version": "ANY"
+    }
     default_options = "use_doxygen=False", \
         "use_opus=False", \
         "use_speex=False", \
@@ -25,6 +28,10 @@ class QXmppConan(ConanFile):
     # Other
     source_path = "qxmpp"
     prefix = "usr"
+
+    def configure(self):
+        self.options.qt_version = os.popen("qmake -query QT_VERSION").read().strip()
+        self.output.info("Configure Qt Version: %s" % self.options.qt_version)
 
     def source(self):
         # Get source code
