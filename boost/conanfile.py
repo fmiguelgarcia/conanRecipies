@@ -6,8 +6,7 @@ import shutil
 class BoostQtConan(ConanFile):
     name = "Boost"
     version = "1.64.0"
-    description = "Boost provides free peer-reviewed portable C++ source libraries - (Headers only)"
-    settings = "os", "compiler", "build_type", "arch"
+    description = "Boost (HEADERS Only) provides free peer-reviewed portable C++ source libraries"
     url = "http://www.boost.org"
     generators = "cmake"
     license = "http://www.boost.org/users/license.html"
