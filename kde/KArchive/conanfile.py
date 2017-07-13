@@ -26,7 +26,7 @@ class KF5KArchiveConan(ConanFile):
                 "CMakeLists.txt",
                 "project(KArchive VERSION ${KF5_VERSION})",
                 '''project(KArchive VERSION ${KF5_VERSION})
-include(conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()''')
 
     def build(self):
@@ -34,7 +34,7 @@ conan_basic_setup()''')
             "CMAKE_INSTALL_PREFIX": "%s/install" % self.build_folder
         }
         cmake = CMake( self)
-        cmake.configure( source_dir="../karchive", build_dir="build", defs=cmake_defs)
+        cmake.configure( source_dir="karchive", defs=cmake_defs)
         cmake.build()
         cmake.build( target="install")
         
