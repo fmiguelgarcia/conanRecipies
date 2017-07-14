@@ -40,7 +40,7 @@ conan_basic_setup()''')
         
     def package(self):
         self.copy( pattern="*", src="install/include", dst="include", keep_path=True, symlinks=True)
-        self.copy( pattern="**/libKF5Archive.*", src="install/lib", dst="lib", keep_path=False, symlinks=True)
+        self.copy( pattern="*", src="install/lib", dst="lib", keep_path=True, symlinks=True)
 
     def package_info(self):
         self.cpp_info.libs = ["KF5Archive"]
