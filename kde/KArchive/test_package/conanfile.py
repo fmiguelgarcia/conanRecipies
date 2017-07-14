@@ -9,6 +9,12 @@ class OpenCVPackageTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     requires = "KF5_KArchive/5.36.0@%s/%s" % (username, channel)
     generators = "cmake"
+    options = { "qt_version": "ANY" }
+    default_options = ""
+
+    def configure(self):
+        self.options.qt_version = os.popen("qmake -query QT_VERSION").read().strip()
+        self.output.info("Configure Qt Version: %s" % self.options.qt_version)
 
     def build(self):
         cmake = CMake(self.settings)

@@ -9,7 +9,7 @@ class KF5ECMConan(ConanFile):
     url = "https://api.kde.org/ecm"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    exports =  "*.cmake"
+    exports =  "ECMConfig.cmake", "ECMConfigVersion.cmake"
 
     def source(self):
         self.run( "git clone git://anongit.kde.org/extra-cmake-modules")
@@ -18,7 +18,7 @@ class KF5ECMConan(ConanFile):
 
     def build(self):
         cmake_defs = { 
-            "CMAKE_INSTALL_PREFIX": "%s/install" % self.build_folder
+            "CMAKE_INSTALL_PREFIX": "install" 
         }
         cmake = CMake( self)
         cmake.configure( source_dir="../extra-cmake-modules", build_dir="build", defs=cmake_defs)
@@ -26,8 +26,9 @@ class KF5ECMConan(ConanFile):
         cmake.build( target="install")
         
     def package(self):
-        self.copy( pattern="*.cmake" )
-        self.copy( pattern="*", src="%s/install" % self.build_folder, keep_path=True)
+        self.copy( pattern="ECMConfig.cmake", keep_path=True )
+        self.copy( pattern="ECMConfigVersion.cmake", keep_path=True )
+        self.copy( pattern="*", src="build/install", keep_path=True, symlinks=True)
 
     def package_info(self):
         self.cpp_info.resdirs = ["share"]

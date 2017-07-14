@@ -1,1 +1,2 @@
-include (./share/ECM/cmake/ECMConfig.cmake)
+get_filename_component( CONAN_ECM_CONFIG_PACKAGE_PREFIX_DIR "${CMAKE_CURRENT_LIST_DIR}" ABSOLUTE)
+include ( "${CONAN_ECM_CONFIG_PACKAGE_PREFIX_DIR}/share/ECM/cmake/ECMConfig.cmake")
