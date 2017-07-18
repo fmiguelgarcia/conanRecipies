@@ -19,6 +19,10 @@ class KF5KArchiveConan(ConanFile):
         self.options.qt_version = os.popen("qmake -query QT_VERSION").read().strip()
         self.output.info("Configure Qt Version: %s" % self.options.qt_version)
 
+    def requirements(self):
+        if self.settings.os == "Windows":
+            self.requires( "zlib/1.2.11@conan/stable")
+
     def source(self):
         self.run( "git clone git://anongit.kde.org/karchive.git")
         with tools.chdir( "karchive"):
