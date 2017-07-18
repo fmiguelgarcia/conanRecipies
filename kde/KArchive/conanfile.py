@@ -9,7 +9,6 @@ class KF5KArchiveConan(ConanFile):
     requires = "KF5_ECM/5.36.0@fmiguelgarcia/stable"
     license = "http://opensource.org/licenses/BSD-3-Clause"
     url = "https://api.kde.org/frameworks/karchive/html/index.html"
-    short_paths = True
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     options = { "qt_version": "ANY" }
@@ -46,6 +45,7 @@ conan_basic_setup()''')
     def package(self):
         self.copy( pattern="*", src="install/include", dst="include", keep_path=True, symlinks=True)
         self.copy( pattern="*", src="install/lib", dst="lib", keep_path=True, symlinks=True)
+        self.copy( pattern="*", src="install/bin", dst="bin", keep_path=True, symlinks=True)
 
     def package_info(self):
         self.cpp_info.libs = ["KF5Archive"]
