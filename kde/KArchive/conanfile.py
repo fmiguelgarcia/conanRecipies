@@ -9,6 +9,7 @@ class KF5KArchiveConan(ConanFile):
     requires = "KF5_ECM/5.36.0@fmiguelgarcia/stable"
     license = "http://opensource.org/licenses/BSD-3-Clause"
     url = "https://api.kde.org/frameworks/karchive/html/index.html"
+    short_paths = True
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     options = { "qt_version": "ANY" }

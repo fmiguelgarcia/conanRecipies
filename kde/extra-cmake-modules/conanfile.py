@@ -7,6 +7,7 @@ class KF5ECMConan(ConanFile):
     description = "Extra CMake Modules for KF5"
     license = "http://opensource.org/licenses/BSD-3-Clause"
     url = "https://api.kde.org/ecm"
+    short_paths = True
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
     exports =  "ECMConfig.cmake", "ECMConfigVersion.cmake"
