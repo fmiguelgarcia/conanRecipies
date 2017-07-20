@@ -11,15 +11,26 @@ class KF5KArchiveConan(ConanFile):
     url = "https://api.kde.org/frameworks/karchive/html/index.html"
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
-    options = { "qt_version": "ANY" }
-    default_options = ""
+    options = { 
+        "qt_version": "ANY",
+        "zip_support": [True, False],
+        "bzip2_support" : [True, False],
+        "lzma_support" : [True, False]
+    }
+    default_options = "zip_support=True", \
+            "bzip2_support=False", \
+            "lzma_support=False"
 
     def configure(self):
         self.options.qt_version = os.popen("qmake -query QT_VERSION").read().strip()
         self.output.info("Configure Qt Version: %s" % self.options.qt_version)
+        # Check BZip2 and l
+        self.options.bzip2_support = self.find_package("BZIP2")
+        self.options.lzma_support = self.find_package("LibLZMA")
+        self.output.info("Compression algorithms supported: ZIP(True), BZIP2({}), LZMA({})".format( self.options.bzip2_support, self.options.lzma_support)) 
 
     def requirements(self):
-        if self.settings.os == "Windows":
+        if tools.os_info.is_windows:
             self.requires( "zlib/1.2.11@conan/stable")
 
     def source(self):
@@ -44,10 +55,29 @@ conan_basic_setup()''')
         
     def package(self):
         self.copy( pattern="*", src="install/include", dst="include", keep_path=True, symlinks=True)
-        self.copy( pattern="*", src="install/lib", dst="lib", keep_path=True, symlinks=True)
-        self.copy( pattern="*", src="install/bin", dst="bin", keep_path=True, symlinks=True)
+        if tools.os_info.is_windows:
+            self.copy( pattern="*.dll", src="install/bin", dst="bin", keep_path=True, symlinks=True)
+            self.copy( pattern="*.lib", src="install/bin", dst="lib", keep_path=True, symlinks=True)
+        elif tools.os_info.is_linux:
+            self.copy( pattern="**KF5Archive.so*", src="install/lib", dst="lib", keep_path=False, symlinks=True)
 
     def package_info(self):
         self.cpp_info.libs = ["KF5Archive"]
         self.cpp_info.includedirs.append( "include/KF5/KArchive")
+
+    def find_package(self, package):
+        isPackageFound = None
+
+        # Link compiler info from Conan to CMake
+
+        # Find package with cmake
+        try:
+            self.run( "cmake --find-package -DNAME=%s -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=EXIST" % package)
+            isPackageFound = True
+        except:
+            isPackageFound = False
+
+        return isPackageFound
+
+
 
