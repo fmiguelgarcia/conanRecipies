@@ -6,7 +6,7 @@ class KF5KArchiveConan(ConanFile):
     name = "KF5_KArchive"
     version = "5.36.0"
     description = "KArchive provides classes for easy reading, creation and manipulation of 'archive' formats like ZIP and TAR."
-    requires = "KF5_ECM/5.36.0@fmiguelgarcia/stable"
+    requires = "KF5_ECM/5.36.0@fmiguelgarcia/stable", "zlib/1.2.11@conan/stable"
     license = "http://opensource.org/licenses/BSD-3-Clause"
     url = "https://api.kde.org/frameworks/karchive/html/index.html"
     settings = "os", "compiler", "build_type", "arch"
@@ -28,10 +28,6 @@ class KF5KArchiveConan(ConanFile):
         self.options.bzip2_support = self.find_package("BZIP2")
         self.options.lzma_support = self.find_package("LibLZMA")
         self.output.info("Compression algorithms supported: ZIP(True), BZIP2({}), LZMA({})".format( self.options.bzip2_support, self.options.lzma_support)) 
-
-    def requirements(self):
-        if tools.os_info.is_windows:
-            self.requires( "zlib/1.2.11@conan/stable")
 
     def source(self):
         self.run( "git clone git://anongit.kde.org/karchive.git")
