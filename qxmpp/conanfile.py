@@ -41,12 +41,15 @@ class QXmppConan(ConanFile):
     def build(self):
         qmake_options = "CONFIG+=debug " if self.settings.build_type == "Debug" else "CONFIG+=release "
         qmake_options += "CONFIG+=warn_on " 
+        qmake_options += "CONFIG+=c++11 " if self.settings.compiler.libcxx == 'libstdc++11' else ''
         qmake_options += "QXMPP_AUTOTEST_INTERNAL=1 " if self.options.autotest_internal else ""
         qmake_options += "QXMPP_USE_DOXYGEN=1 " if self.options.use_doxygen else ""
         qmake_options += "QXMPP_USE_OPUS=1 " if self.options.use_opus else ""
         qmake_options += "QXMPP_USE_SPEEX=1 " if self.options.use_speex else ""
         qmake_options += "QXMPP_USE_THEORA=1 " if self.options.use_theora else ""
         qmake_options += "QXMPP_USE_VPX=1 " if self.options.use_vpx else ""
+
+        self.output.info( 'Qmake options: %s' % qmake_options)
         
         with tools.chdir( "qxmpp"):
             self.run( "qmake \"%s\"" % qmake_options)
